@@ -1,1 +1,21 @@
-# assignment 4 solution
+require 'rake/packagetask'
+
+desc 'Archive a folder'
+task :archive do
+  path = ENV["MYPATH"] || Dir.pwd
+  exclude = ENV["EXCLUDE"]
+  archive_name = path.split("/").last
+  archive_name.gsub!(/\W/, '_')
+  filelist = FileList.new("#{path}/*")
+  unless exclude.nil?
+    exclude = exclude.split(",")
+    exclude.each do |e|
+      filelist = filelist.exclude(/.*(#{e})/)
+    end
+  end
+  filelist = filelist.exclude("#{path}/build")
+  destination = "#{path}/build"
+  Dir.mkdir("#{destination}") unless Dir.exist?("#{destination}")
+  Dir.chdir("#{destination}")
+  `tar -zcvf #{archive_name}.tar.gz #{filelist}`
+end

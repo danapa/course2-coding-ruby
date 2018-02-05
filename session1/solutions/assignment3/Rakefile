@@ -1,1 +1,12 @@
-# assignment 3 solution
+namespace :files do
+  desc 'Rename files named *.yaml to be *.yml'
+  task :rename_yml, [:path] do |t, args|
+    path = args.path || Dir.pwd
+    Dir.glob(path + "/*.{yaml}").each do |f|
+      prefix = f.split("/").last
+      prefix = prefix.split(".").first
+      File.rename("#{f}", "#{path}/#{prefix}.yml")
+      puts "#{f} was renamed to #{path}/#{prefix}.yml"
+    end
+  end
+end

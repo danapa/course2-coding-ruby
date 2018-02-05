@@ -1,1 +1,21 @@
-# assignment 4 solution
+desc 'Archive a folder'
+task :archive do
+  path = ENV["MYPATH"] || Dir.pwd
+  Dir.chdir("#{path}")
+  exclude = ENV["EXCLUDE"]
+  archive_name = path.split("/").last
+  archive_name.gsub!(/\W/, '_')
+  filelist = FileList.new("*")
+  filelist = filelist.exclude("build")
+
+  unless exclude.nil?
+    exclude = exclude.split(",")
+    exclude.each do |e|
+      filelist = filelist.exclude(/.*#{e}/)
+    end
+  end
+
+  destination = "#{path}/build/"
+  Dir.mkdir("#{destination}") unless Dir.exist?("#{destination}")
+  `tar -zcvf  #{destination}#{archive_name}.tar.gz -C "#{path}" #{filelist}`
+end
